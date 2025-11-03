@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+# Author : Jim JMcDonald
+# GitHub source: https://github.com/Jim-JMCD/Genfrn/tree/main
+# Display usage
+function usage() {
+    cat << usage_end
+Genfrn - Generic File Renamer
+genFRN  renames generic meaningless names of files by prefixing the names of parent directories to exisitng names. 
+
+Once the files have been renamed they can be moved, backed up etc without relying upon the directory structure to give them meaning. 
+
+Useful for directories that only contain many files with genric names like
+   image-00204.jpg
+   log.202505261809
+   scan_056.pdf
+and given context by their parent directories.
+
+USAGE
+   genFRN <parent level> [input directory]
+
+   <parent level>    Number of parent directories to include. (1 - 4, manditory
+   [input directory] Directory to process (Default: current directory).
+
+NOTES
+All files in the directory are renamed.
+Directories and hidden files are ignored. 
+
+Example of setting the parent level for ../image-067.jpg 
+
+Parent Level           Resulting File Name
+  1                      Tue_image-067.jpg
+  2                Week4_Tue_image-067.jpg
+  3            May_Week4_Tue_image-067.jpg
+  4       2025_May_Week4_Tue_image-067.jpg
+
+* The script is not recursive, it only the renames all the files in the given directory.
+* If the script parent level exceeds the number of parent levels, the script will use all that it can.
+* Files in "/" cannot be renamed becasue there is no parent directory.
+
+HOW TO UNDO the renaming.
+In the input directory a log file is created. The log file is an executable undo script. 
+To recover run the log/undo file: ./genFRN_log_<YYYYMMDD-hhmm-ss>
+
+Any changes made to the directory contents after the renaming has completed could interfer with the recovery process.
+If you abort while renaming, the log file can be used to undo any renaming up to time of the bail out.
+
+Where <YYYYMMDD-hhmm-ss> is the date-time of log file creation. When the undo is complete remove the log file.
+
+SAFETY
+Always review the preview before confirming.
+Avoid running in system directories (e.g. /var, /etc).
+
+usage_end
+}
+
+function ask_yes_no() {
+    while true; do
+        read -p "$1 [y/n] " answer
+        case $answer in
+            y|Y) return 0 ;;
+            n|N) return 1 ;;
+            *) echo "Please answer y or n." ;;
+        esac
+    done
+}
+
+# Organise the log/undo file - used by trap
+function Do_undo_log(){
+  if [[ "$log_tmp" != "" ]]; then  
+      local log_file="${input_dir}/genFRN_log_$(date +%Y%m%d-%H%M%S).sh"
+      echo "#!/bin/bash" > "$log_file"
+      echo "# Undo script for genFRN" >> "$log_file"
+      cat "$log_tmp" >> "$log_file" 
+      rm "$log_tmp"
+      chmod +x "$log_file"
+      echo ; echo "To UNDO run: $log_file"
+     echo "If you ABORTED while renaming you can still use $log_file to undo any changes"
+  fi
+}
+
+trap Do_undo_log EXIT
+######################################3
+# Main script
+if [[ "$1" == "--help" ]]; then
+    usage
+    exit 0
+fi
+
+log_tmp="" # see Do_undo_log
+
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+    usage
+    exit 1
+fi
+
+if ! [[ "$1" =~ ^[1-4]$ ]]; then
+    echo "Error: Parent level must be 1, 2, 3, or 4."
+    exit 1
+fi
+
+parent_level="$1"
+input_dir="${2:-$PWD}"
+
+if [[ ! -d "$input_dir" ]]; then
+    echo "Error: Directory '$input_dir' does not exist."
+    exit 1
+fi
+
+if [[ "$input_dir" == "/" ]] || [[ "$input_dir" == "." ]] || [[ "$input_dir" == ".." ]] ; then
+    echo "Error: Cannot rename files in the root directory."
+    echo "Error: '.' and '..' cannot be used a source directory names." 
+    exit 1
+fi
+# Build prefix list
+dir="$(realpath $input_dir)"
+parents_tmp=()
+parents=()
+for ((i=0; i<$parent_level; i++)); do
+    dir_n="$(basename "$dir")"
+    if [[ "$dir_n" == "/" ]]; then
+       break
+    fi
+    parents_tmp+=("$dir_n")
+    dir=$(dirname "$dir")
+done
+for (( i=${#parents_tmp[@]}-1; i>=0; i-- )); do
+    parents+=("${parents_tmp[i]}")
+done
+prefix="$(echo "${parents[@]}"  | sed 's/ /_/g')"
+# List done
+
+find "$input_dir" -maxdepth 1 -type f -not -name ".*" -print0 | \
+   while IFS= read -r -d '' file; do
+      old_name=$(basename "$file")
+      new_name="${prefix}_${old_name}"
+      old_path="$file"
+      printf "%-30s -> %-30s\n" "$old_name" "$new_name"
+  done
+
+if ! ask_yes_no "Proceed with renaming?"; then
+   echo "Aborted - nothing changed"
+   exit 0
+elif ! ask_yes_no "Are you sure?         "; then
+   echo "Aborted - nothing changed"
+   exit 0
+fi
+
+log_tmp="genFRN_tmp_log_$(date +%Y%m%d-%H%M%S).sh"
+
+find "$input_dir" -maxdepth 1 -type f -not -name ".*" -print0 |\
+   while IFS= read -r -d '' file; do
+      old_name=$(basename "$file")
+      new_name="${prefix}_${old_name}"
+      printf "%-30s -> %-30s\n" "$old_name" "$new_name"
+      old_path="$file"
+      new_path="$(dirname "$file")/$new_name"
+      mv "$old_path" "$new_path" # using full path names
+      echo "mv '$(basename "$new_path")' '$old_name'"  >> "$log_tmp"
+    done
+echo ; echo "Renaming complete."
+# setting up the undo log file is completed with the trap command calling Do_undo_log function
+
