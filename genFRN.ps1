@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Author: Jim JMcDonald
+# Author  : Jim JMcDonald
 # GitHub source: https://github.com/Jim-JMCD/Genfrn/tree/main
 # PowerShell conversion
 
@@ -184,4 +184,5 @@ foreach ($file in $files) {
 Write-Host "`nRenaming complete." -ForegroundColor Green
 
 # Create final undo log
+
 New-UndoLog -LogTmp $logTmp -InputDir $inputDir
