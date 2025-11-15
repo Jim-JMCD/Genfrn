@@ -51,9 +51,10 @@ __*Any changes made to the directory contents after the renaming has completed c
 
 __*Bailing out during re-name processing :*__ 
 * BASH       : The excutable log file can be used to undo processing up the point of bail out.
-* POWERSHELL : Recovery from a bail out after the script has started re-naming files is manual.  Powershell does not have the functiolaity of the bash *trap* command. 
+* POWERSHELL : Recovery from a bail out after the script has started re-naming files is manual.
 
-__*Recovery*__
+__*Undo recovery*__
+
 In the directory that is processed an executable log file is created. To recover run the command:
 ~~~
   ./genFRN_log_<YYYYMMDD-hhmmss>.sh
@@ -117,4 +118,7 @@ file_15  file_21  file_28  file_34  file_40  file_47  file_8
 $
 $ rm genFRN_log_20251101-105116.sh
 ~~~
-Deep Seek V3 was used to convert the Bash script to Powershell. DeepSeek succeeded with no errors at the first attempt. Microsoft Co-Pilot, ChatGPT and Mistral Le Chat all failed to convert to the script to Powershell. All their attempts to rectify all the problems also failed.   
+#### Notes
+
+* Bash bail out recovery made possible by the *trap* command, it doesn't exist in Powershell.
+* Deep Seek V3 was used to convert the Bash script to Powershell. DeepSeek succeeded with no errors at the first attempt. Microsoft Co-Pilot, ChatGPT and Mistral Le Chat all failed to convert to the script to Powershell. All their attempts to rectify all the problems also failed.   
