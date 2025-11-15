@@ -1,4 +1,4 @@
-## genfrn - _Generic File Re-namer_
+## genFRN - _Generic File Re-namer_
   
 __*genFRN*__ a script ( Bash & Powershell) that renames files, in a directory, that have generic meaningless names by adding a prefix that is created from parent direcory names. 
 
