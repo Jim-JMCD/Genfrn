@@ -108,7 +108,11 @@ $
 ~~~
 ### UNDO
 ~~~
-$ ./genFRN_log_20251101-105116.sh                              # Run the log file 
+
+```
+./genFRN_log_20251101-105116.sh                           
+```
+
 $ ls
 file_1   file_16  file_22  file_29  file_35  file_41  file_48  file_9
 file_10  file_17  file_23  file_3   file_36  file_42  file_49  genFRN_log_20251101-105116.sh
