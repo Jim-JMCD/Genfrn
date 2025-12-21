@@ -19,7 +19,7 @@ _______________________________
 ### Usage
 Users can select how many levels of the parent directories that can be added to the name. Users can undo changes to naming if required.
 ~~~
-genFRN \<parent level\> [input directory]
+genFRN <parent level> [input directory]
 ~~~
 * parent level   = only numbers 1 , 2, 3 and 4 permitted, manditory
 * input directory = optional, input directrory names with spaces are required to be enclosed in 'quotes'. 
