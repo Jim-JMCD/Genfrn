@@ -15,7 +15,8 @@ Best used in directories that only contain many files with genric names like:
 and given context and meaning by their parent directories.
  
 If parent directory name(s) are not suitable it is simple to provide an alterantive prefix to the generic file names.
-The script can process a directory tree using the Linux _find_ command
+
+The script can process a directory tree using the Linux _find_ command or its Powershell equivalent - see notes below
 _______________________________
 ### Usage
 Users can select how many levels of the parent directories that can be added to the name. Users can undo changes to naming if required.
@@ -53,7 +54,7 @@ If parent directory name(s) not suitable. _Either:_
   
 ***Renaming all the files in a directory tree.*** 
 
-genFRN is designed to rename a single directory, like most excecutables they can be run recursively using the Linux find command and Powershell equivalent. 
+genFRN is designed to rename a single directory, like most excecutables they can be run recursively using the Linux find command or Powershell equivalent. 
 
 LINUX,  using the find command like this will rename all the files under ./directory_start
 ~~~
@@ -88,7 +89,8 @@ In the directory that is processed an executable log file is created. To recover
 ~~~
 Where \<YYYYMMDD-hhmmss\> is the date-time of log file creation. When the undo is complete remove the log file.
 
-Example: Renaming all the file in subdirectory __logs__ , all files to have four parent directory names added.
+### Example - Reanme:
+Renaming all the file in subdirectory __logs__ , all files to have four parent directory names added.
 ~~~
 $./genFRN 4 ./logs                                 # It starts with a preview of changes
 file_9         -> transfer_wk1_Thu_logs_file_9
@@ -131,7 +133,7 @@ transfer_wk1_Thu_logs_file_31  genFRN_log_20251101-105116.sh
 transfer_wk1_Thu_logs_file_32
 $
 ~~~
-### UNDO
+###Example: Undo
 ~~~
 $./genFRN_log_20251101-105116.sh       # Run undo log                        
 $ls
@@ -145,13 +147,11 @@ file_15  file_21  file_28  file_34  file_40  file_47  file_8
 $
 $rm genFRN_log_20251101-105116.sh
 ~~~
-### Re-name without using current directory structure
+### Example - Re-name without using current directory structure
 ~~~
-$mkdir transfer_2025_day93
-$mv file_* ./xfer_2025_day93
+$mkdir xfer_2025_day93
+$cp file_* ./xfer_2025_day93
 $./genFRN 1 ./xfer_2025_day93
-$mv ./xfer_2025_day93/* .
-$rmdir ./xfer_2025_day93
 $ls
 xfer_2025_day93_file_1   xfer_2025_day93_file_16  xfer_2025_day93_file_22
 xfer_2025_day93_file_29  xfer_2025_day93_file_35  xfer_2025_day93_file_41
@@ -159,6 +159,7 @@ xfer_2025_day93_file_48  xfer_2025_day93_file_9   xfer_2025_day93_file_10
 xfer_2025_day93_file_17  xfer_2025_day93_file_23  xfer_2025_day93_file_3
 xfer_2025_day93_file_36  xfer_2025_day93_file_42  xfer_2025_day93_file_49 
 # Edited, list too long. 
+# Move or copy to where ever
 ~~~
 #### Notes
 
