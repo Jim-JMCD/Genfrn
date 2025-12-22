@@ -60,7 +60,7 @@ LINUX,  using the find command like this will rename all the files under ./direc
 ~~~
 find ./directory_start -type d -exec /path/to/genFRN 2 {} \;
 ~~~
-* No files in ./directory_start will be renamed
+* No files in _./directory_start_ will be renamed
 * genFRN must be fully pathed
 * In this example 2 levels of the parent directory names will be added to each file name as a prefix.  
 * Each inidvidual directory will have its own undo script.
