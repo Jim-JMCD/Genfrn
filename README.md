@@ -14,7 +14,8 @@ Best used in directories that only contain many files with genric names like:
 
 and given context and meaning by their parent directories.
  
-If parent directory name(s) are not suitable it is simple to provide an alterantive prefix to the generic file names. 
+If parent directory name(s) are not suitable it is simple to provide an alterantive prefix to the generic file names.
+The script can process a directory tree using the Linux _find_ command
 _______________________________
 ### Usage
 Users can select how many levels of the parent directories that can be added to the name. Users can undo changes to naming if required.
@@ -48,8 +49,27 @@ Relative pathes as input will be processed.
 
 If parent directory name(s) not suitable. _Either:_
 * Temporarily rename the parent directory and run genFRN with Level set 1.   _Or:_
-* Create a directory with a suitable name, move all the files to that directory and run the script with Level set 1. If required, move the files back to their original location. See example below. 
+* Create a directory with a suitable name, move all the files to that directory and run the script with Level set 1. If required, move the files back to their original location. See example below.
+  
+***Renaming all the files in a directory tree.*** 
 
+LINUX,  using the find command like this will rename all the files under ./directory_start using the 3 levels of the parebt directory.  
+~~~
+find ./directory_start -type d -exec /path/to/genFRN 3 {} \;
+~~~
+* No files in ./directory_start will be renamed
+* genFRN must be fully pathed
+* In this example three parent directory names are added files, that changes with each level.
+* Each inidvidual directory will have its own undo script.
+
+POWERSHELL equivalent
+~~~
+Get-ChildItem -Directory -Recurse -Path ".\directory_start" | ForEach-Object {
+    & "C:\path\to\genFRN.exe" 3 $_.FullName
+}
+~~~  
+  
+     
 ### HOW TO UNDO the renaming.
 
 __*Any changes made to the directory contents after the renaming has completed could interfer with the recovery process*__.
