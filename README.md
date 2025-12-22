@@ -53,19 +53,21 @@ If parent directory name(s) not suitable. _Either:_
   
 ***Renaming all the files in a directory tree.*** 
 
-LINUX,  using the find command like this will rename all the files under ./directory_start using the 3 levels of the parebt directory.  
+genFRN is designed to rename a single directory, like most excecutables they can be run recursively using the Linux find command and Powershell equivalent. 
+
+LINUX,  using the find command like this will rename all the files under ./directory_start
 ~~~
-find ./directory_start -type d -exec /path/to/genFRN 3 {} \;
+find ./directory_start -type d -exec /path/to/genFRN 2 {} \;
 ~~~
 * No files in ./directory_start will be renamed
 * genFRN must be fully pathed
-* In this example three parent directory names are added files, that changes with each level.
+* In this example 2 levels of the parent directory names will be added to each file name as a prefix.  
 * Each inidvidual directory will have its own undo script.
 
 POWERSHELL equivalent
 ~~~
 Get-ChildItem -Directory -Recurse -Path ".\directory_start" | ForEach-Object {
-    & "C:\path\to\genFRN.exe" 3 $_.FullName
+    & "C:\path\to\genFRN.ps1" 2 $_.FullName
 }
 ~~~  
   
